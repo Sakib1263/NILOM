@@ -1,0 +1,20 @@
+function outp = jOHMratioPspectrum(input,opts)
+
+if isfield(opts,'fs'), fs = opts.fs; end
+if isfield(opts,'cutoff_low'), cutoff_low = opts.cutoff_low; end
+if isfield(opts,'cutoff_high'), cutoff_high = opts.cutoff_high; end
+
+[p,f] = pspectrum(input,fs,'FrequencyLimits',[cutoff_low cutoff_high]);
+
+f = f(f <= ceil(fs/2));
+p = p(f <= ceil(fs/2));
+
+f_all = f(f>=1 & f<=ceil(fs/2));
+p_all = p(f>=1 & f<=64);
+M0 = sum(p_all);
+M1 = sum(p_all.*f_all);
+M2 = sum(p_all.*f_all.^2);
+OHM_all = 10*log10(sqrt(M2/M0)/(M1/M0));
+
+outp = OHM_all;
+end
